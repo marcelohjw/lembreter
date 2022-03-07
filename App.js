@@ -1,10 +1,26 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Button } from 'react-native';
+import * as Notifications from 'expo-notifications';
 
 export default function App() {
+
+  const triggerNotificationHandler = () => {
+    Notifications.scheduleNotificationAsync({
+      content: {
+        title: 'A primeira de todas!',
+        body: 'Uma notificação simples'
+      },
+      trigger: {
+        seconds: 10
+      }
+    });
+  };
+
+
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
+      <Button title='Aperte' onPress={triggerNotificationHandler} />
+      <Text>Esse é o app de notificação!</Text>
       <StatusBar style="auto" />
     </View>
   );
