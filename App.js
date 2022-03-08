@@ -30,7 +30,16 @@ export default function App() {
       }
     });
     */
-  }, [registerForPushNotifications]);
+  }, []);
+
+  useEffect(() => {
+    const subscription = Notifications.addNotificationReceivedListener(not => {
+      console.log(not);
+    });
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   const registerForPushNotifications = async () => {
     let token;
