@@ -1,13 +1,24 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, View, Button, Alert } from 'react-native';
 import * as Notifications from 'expo-notifications';
-import * as Permissions from 'expo-permissions';
+//import * as Permissions from 'expo-permissions';
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => {
+    return {
+      shouldPlaySound: true,
+      shouldShowAlert: true
+    };
+  }
+});
 
 export default function App() {
 
   useEffect(() => {
-    //Permissions.getAsync(Permissions.NOTIFICATIONS);
+    registerForPushNotifications();
+    /*
+    Permissions.getAsync(Permissions.NOTIFICATIONS);
     Notifications.getPermissionsAsync().then(statusObj => {
       if (statusObj.status !== 'granted') {
         return Permissions.askAsync(Permissions.NOTIFICATIONS);
@@ -18,7 +29,27 @@ export default function App() {
         return;
       }
     });
-  }, []);
+    */
+  }, [registerForPushNotifications]);
+
+  const registerForPushNotifications = async () => {
+    let token;
+
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
+      Alert.alert('Falha de permissão! Não autorizado!');
+      return;
+    }
+    token = (await Notifications.getExpoPushTokenAsync()).data;
+    console.log(token);
+  
+    return token;
+  };
 
   const triggerNotificationHandler = () => {
     Notifications.scheduleNotificationAsync({
