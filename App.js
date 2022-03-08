@@ -33,11 +33,16 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    const subscription = Notifications.addNotificationReceivedListener(not => {
+    const backgroundSubscription = Notifications.addNotificationResponseReceivedListener(res => {
+      console.log(res);
+    });
+
+    const foregroundSubscription = Notifications.addNotificationReceivedListener(not => {
       console.log(not);
     });
     return () => {
-      subscription.remove();
+      backgroundSubscription.remove();
+      foregroundSubscription.remove();
     };
   }, []);
 
